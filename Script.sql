@@ -1,0 +1,166 @@
+INSERT INTO HV_BROADCAST VALUES (
+	SEQ_HV_BROADCAST.NEXTVAL,
+	'제목',
+	'Warm 사용 가이드',
+	3,
+	'미사용',
+	'A',
+	SYSDATE,
+	'A',
+	SYSDATE
+);
+
+DELETE FROM HV_BROADCAST WHERE BROADCAST_NO = 1;
+
+INSERT INTO HV_PAGE VALUES (
+	2,
+	1,
+	'제목',
+	2
+);
+
+INSERT INTO HV_IMAGE VALUES (
+	2,
+	1,
+	1,
+	'경로',
+	'내용'
+);
+
+INSERT INTO HV_SCHEDULE VALUES (
+	SEQ_HV_SCHEDULE.NEXTVAL,
+	'제목',
+	'Warm 사용 가이드',
+	3,
+	SYSDATE,
+	'사용',
+	'A',
+	SYSDATE,
+	'A',
+	SYSDATE
+);
+
+INSERT INTO HV_STB_MODEL VALUES (
+	2,
+	1
+);
+
+SELECT * 
+FROM HV_SCHEDULE HS
+INNER JOIN HV_STB_MODEL HSM
+ON HS.SCHEDULE_NO = HSM.SCHEDULE_NO
+WHERE HSM.STB_MODEL_NO = 1;
+
+SELECT *
+FROM HV_BROADCAST HB
+WHERE HB.BROADCAST_TITLE LIKE '%'
+AND HB.BROADCAST_TYPE = 'type'
+AND HB.BROADCAST_USE = 'use'
+AND HB.BROADCAST_WRITER LIKE '%' 
+AND HB.BROADCAST_DATE >= '2021-09-29'
+AND hb.broadcast_date < '2021-09-30';
+
+UPDATE HV_BROADCAST SET BROADCAST_TITLE = ?, BROADCAST_TYPE = ?, BROADCAST_USE = ?, BROADCAST_WRITER = ?, BROADCAST_DATE = SYSDATE WHERE BROADCAST_NO = ?;
+
+SELECT * FROM HV_BROADCAST WHERE BROADCAST_NO = 2;
+
+SELECT broadcast_title, broadcast_type, no_page, broadcast_use,
+broadcast_writer, broadcast_date
+FROM hv_broadcast;
+
+SELECT page_no, page_title, no_image FROM HV_PAGE WHERE BROADCAST_NO = 45 ORDER BY PAGE_NO;
+SELECT page_no, image_no, image_path, image_content FROM HV_IMAGE hi WHERE BROADCAST_NO = 45 ORDER BY PAGE_NO, IMAGE_NO;
+
+SELECT * FROM hv_image WHERE broadcast_no = 45;
+
+SELECT hb.BROADCAST_NO ,hb.BROADCAST_TITLE ,hb.BROADCAST_TYPE ,hb.NO_PAGE ,hb.BROADCAST_USE ,hb.BROADCAST_INIT_WRITER ,hb.BROADCAST_INIT_DATE ,hb.BROADCAST_WRITER ,hb.BROADCAST_DATE ,
+	   hp.PAGE_NO ,hp.PAGE_TITLE ,hp.NO_IMAGE ,
+	   hi.IMAGE_NO ,hi.IMAGE_PATH ,hi.IMAGE_CONTENT
+FROM HV_BROADCAST hb 
+INNER JOIN HV_PAGE hp
+ON hb.BROADCAST_NO = hp.BROADCAST_NO
+INNER JOIN HV_IMAGE hi 
+ON hb.BROADCAST_NO = hi.BROADCAST_NO AND hp.PAGE_NO = hi.PAGE_NO
+WHERE hb.BROADCAST_NO = 45;
+
+SELECT BROADCAST_NO, PAGE_NO, PAGE_TITLE, NO_IMAGE FROM HV_PAGE WHERE BROADCAST_NO = 45;
+
+SELECT hs.SL_GUIDE_SCHL_SEQ ,hs.NAME ,hs."TYPE" ,hs.SL_GUIDE_FORM_SEQ ,hs.START_TIME ,hs.USE_YN ,
+	   hs.REGUSER ,hs.CHGUSER ,hs.REGDATE ,hs.CHGDATE ,hsm.STB_MODEL
+FROM SL_GUIDE_SCHL hs 
+INNER JOIN SL_GUIDE_SCHL_STB hsm 
+ON hs.SL_GUIDE_SCHL_SEQ = hsm.SL_GUIDE_SCHL_SEQ
+WHERE hsm.STB_MODEL = '테스트1';
+
+SELECT ROWNUM AS "no", SL_GUIDE_FORM_SEQ AS form_seq, name, type, num_page, use_yn, reguser, chguser, regdate, chgdate FROM SL_GUIDE_FORM;
+
+SELECT ROW_NUMBER() OVER (ORDER BY SL_GUIDE_FORM.chgdate DESC) "no", SL_GUIDE_FORM_SEQ AS form_seq, name, type, num_page, use_yn, reguser, chguser, regdate, chgdate FROM SL_GUIDE_FORM;
+
+SELECT ROW_NUMBER() OVER (ORDER BY SL_GUIDE_SCHL.CHGDATE DESC) "no", SL_GUIDE_SCHL_SEQ ,name ,type ,SL_GUIDE_FORM_SEQ ,start_time ,use_yn
+            ,reguser ,chguser ,regdate ,chgdate
+            FROM SL_GUIDE_SCHL WHERE "no" BETWEEN 1 AND 3;
+           
+SELECT stb_model FROM SL_GUIDE_SCHL_STB WHERE SL_GUIDE_SCHL_SEQ = 42;
+           
+SELECT SL_GUIDE_SCHL_SEQ AS schedule_seq, name, type, SL_GUIDE_FORM_SEQ AS form_seq, use_yn, start_time, reguser, chguser, regdate, chgdate
+FROM SL_GUIDE_SCHL
+WHERE SL_GUIDE_SCHL_SEQ = 101;
+
+INSERT INTO COMM_CODE (CD_GRP, CD_GRP_NM, CD, CD_NM, USE_FLG, DISP_ORD) VALUES ('SL0000', '가이드 유형', 'type001', 'Warm 부팅 가이드', 1, 1);
+
+SELECT sg.image_order, sg.image_seq, sg.description,
+            NVL2(ui.image_seq, '#{url_prefix}' || ui.path || '/' || ui.save_filename, null) as image_url
+            FROM SL_GUIDE_FORM_PAGE_IMAGE sg
+            LEFT JOIN UI_IMAGE ui
+            ON ui.image_seq = sg.image_seq
+            WHERE SL_GUIDE_FORM_SEQ = 0 AND page_order = 0;
+           
+SELECT SL_GUIDE_FORM_SEQ AS form_seq, name 
+FROM SL_GUIDE_FORM
+WHERE name LIKE '%2%' ESCAPE '@'
+ORDER BY SL_GUIDE_FORM.chgdate;
+
+SELECT COUNT(*) FROM SVC_SL_GUIDE_SCHL WHERE SCHL_ID = 21;
+
+SELECT PAGE_ORDER ,IMAGE1 ,DESCRIPTION1 ,IMAGE2 ,DESCRIPTION2 FROM SVC_SL_GUIDE_SCHL_PAGE WHERE SCHL_ID = 102 ORDER BY PAGE_ORDER;
+
+SELECT SL_GUIDE_FORM_SEQ AS form_seq, name, TYPE FROM SL_GUIDE_FORM WHERE USE_YN = 'Y';
+
+
+SELECT ssgs.sp_id, ssgs.schl_id, ssgs.TYPE, ssgss.stb_model, ssgs.START_TIME, ssgs.CHGDATE 
+FROM SVC_SL_GUIDE_SCHL ssgs INNER JOIN SVC_SL_GUIDE_SCHL_STB ssgss ON ssgs.SCHL_ID = ssgss.SCHL_ID
+WHERE ssgss.STB_MODEL = 'UC1600X' AND START_TIME <= SYSDATE() order by START_TIME desc, CHGDATE desc;
+
+
+            SELECT ssgs.schl_id
+            FROM SVC_SL_GUIDE_SCHL ssgs INNER JOIN SVC_SL_GUIDE_SCHL_STB ssgss ON ssgs.SCHL_ID = ssgss.SCHL_ID
+            WHERE ssgs.sp_id = #{domain} AND ssgs.type = #{type}
+            AND ssgss.STB_MODEL = #{model} AND ssgs.START_TIME <= SYSDATE() order by START_TIME desc limit 1
+
+SELECT PAGE_ORDER ,IMAGE1 ,DESCRIPTION1 ,IMAGE2 ,DESCRIPTION2 FROM SVC_SL_GUIDE_SCHL_PAGE WHERE SCHL_ID = 5;
+
+CREATE TABLE TEST
+(
+	a NUMBER NOT NULL
+);
+
+SELECT PAGE_ORDER ,IMAGE1 ,DESCRIPTION1 ,IMAGE2 ,DESCRIPTION2
+            FROM SVC_SL_GUIDE_SCHL_PAGE
+            WHERE SCHL_ID = 102 ORDER BY PAGE_ORDER;
+
+INSERT INTO svc_sl_guide_schl_page SELECT * FROM dbbp_ui_main.svc_sl_guide_schl_page WHERE sp_id = 'CJHV' AND schl_id = 1;
+
+SELECT SL_GUIDE_FORM_SEQ AS form_seq FROM SL_GUIDE_SCHL WHERE START_TIME = TO_DATE('2021-11-22 09:49:00','yyyy-mm-dd hh24:mi:ss');
+SELECT STB_MODEL FROM SL_GUIDE_FORM_STB WHERE SL_GUIDE_FORM_SEQ = (SELECT SL_GUIDE_FORM_SEQ FROM SL_GUIDE_SCHL WHERE START_TIME = TO_DATE('2021-11-22 09:49:00','yyyy-mm-dd hh24:mi:ss') AND SL_GUIDE_FORM_SEQ != 21);
+
+SELECT ROW_NUMBER() OVER (ORDER BY hf.chgdate) no, hf.sl_guide_form_seq AS form_seq FROM SL_GUIDE_FORM hf;
+
+SELECT * FROM dbbp_ui_main.svc_sl_guide_schl WHERE sp_id = 'CJHV' AND schl_id = 1;
+
+CREATE USER c##UIADM IDENTIFIED BY UIADM;
+
+GRANT RESOURCE, CONNECT, DBA TO C##UIADM;
+
+DROP USER c##UIADM CASCADE;
+
+COMMIT;
